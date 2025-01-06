@@ -1,0 +1,81 @@
+// 新增收入記錄A
+void th15::addIncomeRecord() {
+    QString category = categoryInput->text();
+    bool ok;
+    double amount = amountInput->text().toDouble(&ok); // 讀取並檢查金額
+    QString note = noteInput->text();
+    QDate date = dateInput->date();  // 獲取日期
+
+    if (!ok || amount <= 0) { // 如果金額無效，顯示錯誤訊息
+        QMessageBox::warning(this, "輸入錯誤", "請確保金額為有效數字，並且大於 0！");
+        return;
+    }
+
+    // 如果金額大於等於 1000，彈出提示
+    if (amount >= 1000) {
+        QMessageBox::warning(this, "水喔", "有賺欸!美麥喔!");
+    }
+
+    Record newRecord = {date, category, amount, note}; // 創建新的收入記錄
+    records.append(newRecord); // 將記錄加入到記錄容器中
+
+    // 更新總收入
+    totalIncome += amount;
+
+    // 更新顯示
+    totalIncomeLabel->setText(QString("總收入：%1").arg(totalIncome));
+    totalExpenseLabel->setText(QString("總支出：%1").arg(totalExpense));
+    balanceLabel->setText(QString("餘額：%1").arg(totalIncome - totalExpense));  // 計算餘額
+
+    // 更新表格顯示
+    int row = queryResults->rowCount();
+    queryResults->insertRow(row);
+    queryResults->setItem(row, 0, new QTableWidgetItem(newRecord.date.toString("yyyy-MM-dd")));
+    queryResults->setItem(row, 1, new QTableWidgetItem(newRecord.category));
+    queryResults->setItem(row, 2, new QTableWidgetItem(QString::number(newRecord.amount)));
+    queryResults->setItem(row, 3, new QTableWidgetItem(newRecord.note));
+
+    QMessageBox::information(this, "新增成功", "收入記錄已成功新增！"); // 顯示成功訊息
+
+    amountInput->clear(); // 清空金額輸入框
+    noteInput->clear();   // 清空備註輸入框
+}
+
+// 新增支出記錄
+void th15::addExpenseRecord() {
+    QString category = categoryInput->text();
+    bool ok;
+    double amount = amountInput->text().toDouble(&ok); // 讀取並檢查金額
+    QString note = noteInput->text();
+    QDate date = dateInput->date();  // 獲取日期
+
+    if (!ok || amount <= 0) { // 如果金額無效，顯示錯誤訊息
+        QMessageBox::warning(this, "輸入錯誤", "請確保金額為有效數字，並且大於 0！");
+        return;
+    }
+
+    // 支出金額為負數
+    Record newRecord = {date, category, -amount, note}; // 創建支出記錄
+    records.append(newRecord); // 將記錄加入到記錄容器中
+
+    // 更新總支出
+    totalExpense += amount;
+
+    // 更新顯示
+    totalIncomeLabel->setText(QString("總收入：%1").arg(totalIncome));
+    totalExpenseLabel->setText(QString("總支出：%1").arg(totalExpense));
+    balanceLabel->setText(QString("餘額：%1").arg(totalIncome - totalExpense));  // 計算餘額
+
+    // 更新表格顯示
+    int row = queryResults->rowCount();
+    queryResults->insertRow(row);
+    queryResults->setItem(row, 0, new QTableWidgetItem(newRecord.date.toString("yyyy-MM-dd")));
+    queryResults->setItem(row, 1, new QTableWidgetItem(newRecord.category));
+    queryResults->setItem(row, 2, new QTableWidgetItem(QString::number(newRecord.amount)));
+    queryResults->setItem(row, 3, new QTableWidgetItem(newRecord.note));
+
+    QMessageBox::information(this, "新增成功", "支出記錄已成功新增！"); // 顯示成功訊息
+
+    amountInput->clear(); // 清空金額輸入框
+    noteInput->clear();   // 清空備註輸入框
+}

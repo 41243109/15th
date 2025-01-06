@@ -1,0 +1,54 @@
+// 更新餘額顯示
+void th15::updateBalance() {
+    // 根據選擇的時間範圍進行篩選
+    QDate currentDate = QDate::currentDate();
+    QDate startDateValue;
+    QDate endDateValue;
+
+    if (timeRangeComboBox->currentText() == "本週") {
+        startDateValue = currentDate.addDays(-currentDate.dayOfWeek() + 1); // 本周一
+        endDateValue = startDateValue.addDays(6); // 本周日
+    } else {
+        startDateValue = currentDate.addDays(-currentDate.day()); // 本月1號
+        endDateValue = currentDate; // 本月底
+    }
+
+    double filteredIncome = 0;
+    double filteredExpense = 0;
+
+    // 遍歷所有記錄，根據時間範圍進行篩選
+    for (const Record &record : records) {
+        if (record.date >= startDateValue && record.date <= endDateValue) {
+            if (record.amount > 0) {
+                filteredIncome += record.amount;
+            } else {
+                filteredExpense += record.amount;
+            }
+        }
+    }
+
+    // 更新 UI 顯示的收入、支出和餘額
+    totalIncomeLabel->setText(QString("總收入：%1").arg(filteredIncome));
+    totalExpenseLabel->setText(QString("總支出：%1").arg(filteredExpense));
+    balanceLabel->setText(QString("餘額：%1").arg(filteredIncome - filteredExpense));
+}
+
+// 查詢記錄
+void th15::queryRecords() {
+    QDate start = startDate->date();
+    QDate end = endDate->date();
+
+    queryResults->setRowCount(0); // 清空表格
+
+    // 遍歷所有記錄，根據日期範圍進行篩選
+    for (const Record &record : records) {
+        if (record.date >= start && record.date <= end) {
+            int row = queryResults->rowCount();
+            queryResults->insertRow(row);
+            queryResults->setItem(row, 0, new QTableWidgetItem(record.date.toString("yyyy-MM-dd")));
+            queryResults->setItem(row, 1, new QTableWidgetItem(record.category));
+            queryResults->setItem(row, 2, new QTableWidgetItem(QString::number(record.amount)));
+            queryResults->setItem(row, 3, new QTableWidgetItem(record.note));
+        }
+    }
+}

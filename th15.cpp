@@ -331,8 +331,8 @@ void th15::queryRecords() {
     // 遍歷所有記錄，根據日期範圍進行篩選
     for (const Record &record : records) {
         if (record.date >= start && record.date <= end) {
-            int row = queryResults->rowCount();
-            queryResults->insertRow(row);
+            int row = queryResults->rowCount(); //回傳目前表格的總行數
+            queryResults->insertRow(row);       //在表格中插入一行新的資料列
             queryResults->setItem(row, 0, new QTableWidgetItem(record.date.toString("yyyy-MM-dd")));
             queryResults->setItem(row, 1, new QTableWidgetItem(record.category));
             queryResults->setItem(row, 2, new QTableWidgetItem(QString::number(record.amount)));

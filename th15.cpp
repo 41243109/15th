@@ -260,6 +260,10 @@ void th15::addExpenseRecord() {
         return;
     }
 
+     if (amount >= 1000) {
+        QMessageBox::warning(this, "喂喂喂", "買買買!你的錢是大風颳來的喔!");
+    }
+
     // 支出金額為負數
     Record newRecord = {date, category, -amount, note}; // 創建支出記錄
     records.append(newRecord); // 將記錄加入到記錄容器中
